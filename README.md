@@ -17,6 +17,25 @@ parameters.
 - focused artifact, server-order, file-tool, performance, typecheck, and build
   checks.
 
+## 与上游 `Waishnav/devspace` v1.0.5 的差异
+
+Word 和 PDF 并不是被工具排除的格式。上游版本和本定制版都会把文件作为
+二进制字节保存，不会转换或编辑文档内容；真正的差异在于平台支持和文件输入方式：
+
+- 上游 v1.0.5 的 `download_artifact` 仅在 Linux 注册，Windows 上不能通过原生
+  MCP 文件对象保存附件。
+- 本定制版将 `download_artifact` 扩展到 Linux 和 Windows，并保留工作区边界、
+  路径穿越、覆盖、符号链接/ junction、大小和发布完整性检查。因此，在 Windows
+  上可以保存 MCP 主机提供的 `.pdf`、`.docx` 等文件。
+- 本定制版新增 `write_binary`，当 MCP 主机不能传递原生文件对象时，可用完整的
+  Base64 字符串或 `data:*;base64` URL 写入二进制文件；单个内联负载上限为 32 MiB。
+
+保存 Word/PDF 的前提是设置 `DEVSPACE_ARTIFACTS=1`、先调用 `open_workspace`，并
+使用工作区内新的相对路径。`download_artifact` 不接受任意下载 URL，也不会读取浏览器
+下载目录；如果聊天客户端没有把附件作为原生文件传给 MCP，这属于客户端能力限制，
+应改用 `write_binary` 或客户端支持的文件适配器。服务只负责保存字节，不负责生成、
+解析或编辑 Word/PDF 内容。
+
 ## Requirements
 
 - Node.js `>=22.19 <27`
@@ -352,6 +371,11 @@ It uses the official Winget package `ngrok.ngrok` when ngrok is not already on
 ngrok config add-authtoken <YOUR_NGROK_TOKEN>
 ```
 
+ngrok 需要先注册账号并在 Dashboard 获取 AuthToken；免费计划会自动分配一个
+`*.ngrok-free.app` 开发域名。运行 `ngrok http 3003` 后，终端会显示本次隧道的
+公网 HTTPS origin，不需要另外购买或注册域名。免费计划不能自定义域名；如需固定的
+自定义域名，应使用支持该功能的付费计划。
+
 The token, `ngrok.yml`, OAuth password, local paths, and tunnel URL are runtime
 data and must not be committed.
 
@@ -431,13 +455,13 @@ Owner password、ngrok 令牌、Cookie 或其他凭据。
 https://github.com/cooky-dance/devspace-local-artifacts
 ```
 
-如果 Agent 无权访问这个私有仓库，可以改用官方公开项目链接：
+上游原项目：
 
 ```text
 https://github.com/Waishnav/devspace
 ```
 
-但本地图片保存和本文档中的定制说明以本仓库 README 为准。无论使用哪个 Agent，都不要把
+本仓库的 Windows 文件写入、Word/PDF 保存差异和本文档中的定制说明以本 README 为准。无论使用哪个 Agent，都不要把
 `%USERPROFILE%\.devspace\auth.json` 的内容粘贴给它。
 
 ## License
