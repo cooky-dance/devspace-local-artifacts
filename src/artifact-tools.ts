@@ -417,6 +417,7 @@ export async function downloadIncomingArtifact({
       workspaceRoot,
       "artifact_workspace_unsafe",
       "Selected workspace root is not a real directory.",
+      true,
     );
     destinationDirectory = await prepareDestinationDirectory(
       workspaceHandle,
@@ -575,11 +576,17 @@ async function openDirectoryNoFollow(
   path: string,
   code: string,
   message: string,
+  allowResolvedAlias = false,
 ): Promise<ArtifactDirectoryHandle> {
   if (process.platform === WINDOWS_PLATFORM) {
     try {
-      await assertWindowsRealDirectoryPath(path, code, message);
-      const handle = createWindowsDirectoryHandle(path);
+      const resolvedPath = await assertWindowsRealDirectoryPath(
+        path,
+        code,
+        message,
+        allowResolvedAlias,
+      );
+      const handle = createWindowsDirectoryHandle(resolvedPath);
       await assertDirectoryHandle(handle);
       return handle;
     } catch (error) {
@@ -640,7 +647,8 @@ async function assertWindowsRealDirectoryPath(
   path: string,
   code: string,
   message: string,
-): Promise<void> {
+  allowResolvedAlias = false,
+): Promise<string> {
   let entry: Awaited<ReturnType<typeof lstat>>;
   try {
     entry = await lstat(path);
@@ -657,7 +665,7 @@ async function assertWindowsRealDirectoryPath(
   } catch {
     throw new ArtifactError(code, message);
   }
-  if (!sameWindowsPath(path, resolvedPath)) {
+  if (!allowResolvedAlias && !sameWindowsPath(path, resolvedPath)) {
     throw new ArtifactError(code, message);
   }
 
@@ -670,6 +678,7 @@ async function assertWindowsRealDirectoryPath(
   if (!resolvedEntry.isDirectory() || resolvedEntry.isSymbolicLink()) {
     throw new ArtifactError(code, message);
   }
+  return resolvedPath;
 }
 
 function sameWindowsPath(left: string, right: string): boolean {
