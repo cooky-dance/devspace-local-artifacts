@@ -105,6 +105,77 @@ devspace serve
 `https://<YOUR_NGROK_DOMAIN>/mcp`。同一台电脑上的本地客户端可以直接访问
 `http://127.0.0.1:3003/mcp`，不需要公网隧道。
 
+## 本地运行方式（不使用公网隧道）
+
+如果 MCP 客户端/Agent 就运行在同一台 Windows 电脑上，可以只启动 DevSpace，
+不启动 ngrok。此时客户端使用：
+
+```text
+http://127.0.0.1:3003/mcp
+```
+
+### 使用全局安装的 `devspace` 命令
+
+在 PowerShell 中运行：
+
+```powershell
+$env:PORT = "3003"
+$env:DEVSPACE_ARTIFACTS = "1"
+devspace init
+```
+
+首次初始化时，允许访问的根目录只选择确实需要给 Agent 使用的文件夹；公网基础
+URL 可以填写：
+
+```text
+http://127.0.0.1:3003
+```
+
+初始化完成后，在同一个终端启动服务：
+
+```powershell
+$env:PORT = "3003"
+$env:DEVSPACE_ARTIFACTS = "1"
+devspace serve
+```
+
+看到 `devspace listening on http://127.0.0.1:3003/mcp` 后，另开一个 PowerShell
+检查服务：
+
+```powershell
+Invoke-WebRequest -UseBasicParsing http://127.0.0.1:3003/healthz
+devspace doctor
+```
+
+健康检查返回 HTTP 200 后，把 `http://127.0.0.1:3003/mcp` 填入同机 MCP 客户端。
+服务会在当前窗口前台运行，停止时按 `Ctrl+C`。本地客户端能连接时不需要 ngrok，
+但 ChatGPT 网页端这类云端客户端仍然需要公网 HTTPS 隧道。
+
+### 从源码目录运行
+
+如果你想修改 DevSpace 本身，直接在源码目录运行：
+
+```powershell
+Set-Location C:\path\to\devspace-local-artifacts
+npm ci
+npm run build
+
+$env:PORT = "3003"
+$env:DEVSPACE_ARTIFACTS = "1"
+npm run dev
+```
+
+`npm run dev` 会监视 `src` 目录，代码变化或进程崩溃后自动重启服务器。首次运行
+前仍然需要先执行一次 `devspace init`；如果当前目录没有全局命令，可以用已构建
+的 CLI 初始化：
+
+```powershell
+node dist/cli.js init
+```
+
+更稳妥的方式是从已经完成全局安装的终端执行 `devspace init`，因为初始化文件默认
+保存在当前 Windows 用户的 `%USERPROFILE%\.devspace` 下。
+
 ## ChatGPT 网页端：添加自定义 MCP
 
 ChatGPT 的菜单名称会随网页版本变化，通常位于 Settings → Apps/Connectors →
@@ -333,6 +404,33 @@ See [docs/dependencies.md](docs/dependencies.md),
 [docs/setup.md](docs/setup.md), [docs/configuration.md](docs/configuration.md),
 [docs/artifact-exchange.md](docs/artifact-exchange.md), and
 [docs/security.md](docs/security.md) for detailed setup and safety boundaries.
+
+## 也可以让 Agent 教你使用
+
+如果不想手动记这些命令，可以把项目链接直接粘贴给你使用的 Agent，并发送类似
+下面的请求：
+
+```text
+请先阅读这个 DevSpace 项目的 README，告诉我在 Windows 上如何本地安装、初始化、
+启动 MCP 服务，并说明 ChatGPT 网页端、普通聊天模式 Add plugin 和本地 MCP 客户端
+分别应该填什么地址。请只给出步骤和命令，不要读取、输出或保存我的 auth.json、
+Owner password、ngrok 令牌、Cookie 或其他凭据。
+```
+
+当前这份带本地文件写入说明的版本：
+
+```text
+https://github.com/cooky-dance/devspace-local-artifacts
+```
+
+如果 Agent 无权访问这个私有仓库，可以改用官方公开项目链接：
+
+```text
+https://github.com/Waishnav/devspace
+```
+
+但本地图片保存和本文档中的定制说明以本仓库 README 为准。无论使用哪个 Agent，都不要把
+`%USERPROFILE%\.devspace\auth.json` 的内容粘贴给它。
 
 ## License
 
