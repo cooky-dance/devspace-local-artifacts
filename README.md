@@ -262,12 +262,16 @@ public/images/chat-history/，按 generated-001.png、generated-002.png 的顺�
 - 如果网页显示插件被禁用或“重新连接”，先恢复 DevSpace/ngrok，再点击重新连接；
   不要在聊天中反复粘贴 Owner password。
 
-### 操作截图（待补充）
+### 操作截图
 
-这里预留三张实际操作图，后续可替换为你的截图：
+第一张实际操作图如下：ChatGPT 普通聊天模式中，`dev-bin` 插件已经列出 7 个工具，
+其中包含 `download_artifact` 和 `write_binary`，说明图片文件写入能力已启用。
 
-1. ChatGPT 普通聊天模式中点击 **Add plugin/添加插件** 的位置。
-2. 已启用 DevSpace 后的聊天工具栏状态。
+![ChatGPT 聊天模式中 DevSpace 插件列出可用工具](docs/assets/chatgpt-devspace-tools.png)
+
+后续还可以补充：
+
+2. 点击 **Add plugin/添加插件** 的界面位置。
 3. 图片保存成功后返回本地相对路径的结果。
 
 ### Owner password 在哪里？
