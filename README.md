@@ -269,9 +269,13 @@ public/images/chat-history/，按 generated-001.png、generated-002.png 的顺�
 
 ![ChatGPT 聊天模式中 DevSpace 插件列出可用工具](docs/assets/chatgpt-devspace-tools.png)
 
-后续还可以补充：
+第二张实际操作图如下：在聊天模式中询问“我的工作目录有哪些”，DevSpace 调用
+`open_workspace` 并返回已打开的本地工作区。
 
-2. 点击 **Add plugin/添加插件** 的界面位置。
+![ChatGPT 通过 DevSpace 打开本地工作区](docs/assets/chatgpt-devspace-open-workspace.png)
+
+仍待补充：
+
 3. 图片保存成功后返回本地相对路径的结果。
 
 ### Owner password 在哪里？
