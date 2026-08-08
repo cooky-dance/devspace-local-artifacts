@@ -464,6 +464,13 @@ https://github.com/Waishnav/devspace
 本仓库的 Windows 文件写入、Word/PDF 保存差异和本文档中的定制说明以本 README 为准。无论使用哪个 Agent，都不要把
 `%USERPROFILE%\.devspace\auth.json` 的内容粘贴给它。
 
+## 上游归属与许可证
+
+本仓库是基于 [Waishnav/devspace](https://github.com/Waishnav/devspace) v1.0.5 的
+公开定制版，不是上游官方发行版，也不代表上游作者背书。上游的 MIT 版权声明和许可
+文本保留在 [LICENSE](LICENSE) 中；发布包含上游代码的副本或衍生版本时，请一并保留
+该文件，并另外核对依赖项各自的许可证。
+
 ## License
 
 MIT. See [LICENSE](LICENSE).
